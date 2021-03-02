@@ -75,7 +75,12 @@ def checkpricesrange(symbol, indexrange):
         sayit(f'. Alert {symbol} is heading up')
     if v == indexrange:
         sayit(f'. Alert {symbol} is heading down')
-    print("\t",symbol,v,end=' ')
+    d = '-'
+    if v>0:
+        d = 'D'
+    if v<0:
+        d = 'U'
+    print("\t",symbol,"avg last ",indexrange," checks is ",d,' ',round(prices[symbol][indexrange-1],3),end=' ')
 
 def sayit(mytext):
     language = "en"
