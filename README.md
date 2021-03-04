@@ -8,7 +8,7 @@ python-dateutil
 playsound
 
 install requirements with
-pip yahoo_fin gtts python-dateutil playdound
+pip yahoo_fin gtts python-dateutil playsound
 
 
 Will alert you by saying 
