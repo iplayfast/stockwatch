@@ -9,8 +9,12 @@ import math
 import dateutil.parser
 from gtts import gTTS
 from yahoo_fin import stock_info
+from playsound import playsound
+
 indexrange = 10
 prices = {}
+maxPrices = {}
+minPrices = {}
 
 
 def cleanInt(i):
@@ -86,24 +90,41 @@ def sayit(mytext):
     language = "en"
     myobj = gTTS(text=mytext,lang=language,slow=False)
     myobj.save('sayit.mp3')
-    os.system('mpg321 sayit.mp3')
+    playsound('sayit.mp3')
+    os.remove('sayit.mp3')
+    #os.system('sayit.mp3')
 
 
 def runonce(indexrange):
     #print('finding following stocks:', str(sys.argv[1:]), toDowHourMin())
     try:
         for symbol in sys.argv[1:]:
+            print('getting live price')
             price = stock_info.get_live_price(symbol)
             for i in range(indexrange-1):
                 prices[symbol][i] = prices[symbol][i+1]
             prices[symbol][indexrange-1] = price
+            if (minPrices[symbol]==-1)
+                minPrices[symbol]=price
+            if minPrices[symbol]>price:
+                minPrices[symbol]=price
+                sayit(f'. Alert {symbol} has new minimum price')
+            if (maxPrices[symbol]==-1):
+                maxPrices[symbol]=prices[symbol]
+            if (maxPrices[symbol]<price):
+                maxPrices[symbol]=prices[symbol]
+                sayit(f', Alert {symbol} has new maximum price')
             checkpricesrange(symbol, indexrange)
-    except:
-        time.sleep(60)
+    except AssertionError as error:
+        print(f'error looking up {symbol} {error}')
+        time.sleep(6)
     time.sleep(1)
 
 for symbol in sys.argv[1:]:
     prices[symbol] = []
+    maxPrices[symbol]=-1
+    minPrices[symbol]=-1
+
     for i in range(indexrange):
         prices[symbol].append(0)
 while True:
@@ -117,3 +138,8 @@ while True:
             time.sleep(60)  # sleep 1 minute
         else:
             time.sleep(60 * 60 * 24)  # sleep a day
+    for symbol in sys.argv[1:]: # new day, start fresh
+        prices[symbol] = []
+        maxPrices[symbol]=-1
+        minPrices[symbol]=-1
+
