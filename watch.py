@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 """
 http://theautomatic.net/2019/04/17/how-to-get-options-data-with-python/
 """
@@ -73,47 +74,78 @@ def checkprices(symbol, index):
 def checkpricesrange(symbol, indexrange):
     v = 0
     indexrange = indexrange - 1
+    name = swapname(symbol)
     for index in range(indexrange):
         v = v + checkprices(symbol, index)
     if v == -indexrange:
-        sayit(f'. Alert {symbol} is heading up')
+        sayit(f'. Alert {name} is heading up')
     if v == indexrange:
-        sayit(f'. Alert {symbol} is heading down')
+        sayit(f'. Alert {name} is heading down')
     d = '-'
     if v>0:
         d = 'D'
     if v<0:
         d = 'U'
-    print("\t",symbol,"avg last ",indexrange," checks is ",d,' ',round(prices[symbol][indexrange-1],3),end=' ')
+    print("\t",symbol," trend is ",d,' ',round(prices[symbol][indexrange],3),end=' ')
 
 def sayit(mytext):
+    print(mytext)
     language = "en"
     myobj = gTTS(text=mytext,lang=language,slow=False)
     myobj.save('sayit.mp3')
-    playsound('sayit.mp3')
-    os.remove('sayit.mp3')
-    #os.system('sayit.mp3')
-
+    if os.name=='posix':
+        #linux
+        os.system('mpg321 -q -4 sayit.mp3')
+    else:
+        #windows
+        playsound('sayit.mp3')
+def swapname(symbol):
+    if symbol=='tsla':
+        return 'tesla'
+    if symbol=='pltr':
+        return 'palentir'; 
+    if symbol=='bmo':
+        return 'bank of montreal'
+    if symbol=='sndl':
+        return 'sundial'
+    if symbol=='cgx':
+        return 'galaxy'
+    if symbol=='arkk':
+        return 'ark k '
+    if symbol=='twtr':
+        return 'twitter'
+    if symbol=='pep':
+        return 'pepsi'
+    if symbol=='hpq':
+        return 'hp'
+    if symbol=='tlry':
+        return 'Tilray'
+    return symbol
 
 def runonce(indexrange):
     #print('finding following stocks:', str(sys.argv[1:]), toDowHourMin())
     try:
         for symbol in sys.argv[1:]:
-            print('getting live price')
-            price = stock_info.get_live_price(symbol)
+            try:
+                price = stock_info.get_live_price(symbol)
+            except:
+                return
+            if len(prices[symbol])<indexrange:
+                indexrange = len(prices[symbol])
             for i in range(indexrange-1):
                 prices[symbol][i] = prices[symbol][i+1]
             prices[symbol][indexrange-1] = price
-            if (minPrices[symbol]==-1)
+            stockname = swapname(symbol)
+            if (minPrices[symbol]==-1):
                 minPrices[symbol]=price
             if minPrices[symbol]>price:
                 minPrices[symbol]=price
-                sayit(f'. Alert {symbol} has new minimum price')
+                sayit(f'. Alert {stockname} has new minimum price')
             if (maxPrices[symbol]==-1):
-                maxPrices[symbol]=prices[symbol]
+                maxPrices[symbol]=price
             if (maxPrices[symbol]<price):
-                maxPrices[symbol]=prices[symbol]
-                sayit(f', Alert {symbol} has new maximum price')
+                maxPrices[symbol]=price
+                sayit(f', Alert {stockname} has new maximum price')
             checkpricesrange(symbol, indexrange)
     except AssertionError as error:
         print(f'error looking up {symbol} {error}')
@@ -137,9 +169,9 @@ while True:
         if dow > '0' and dow < '6':  # in right day but not right time
             time.sleep(60)  # sleep 1 minute
         else:
+            sayit("After hours, so sleeping ")
             time.sleep(60 * 60 * 24)  # sleep a day
-    for symbol in sys.argv[1:]: # new day, start fresh
-        prices[symbol] = []
-        maxPrices[symbol]=-1
-        minPrices[symbol]=-1
+        for symbol in sys.argv[1:]: # new day, start fresh
+            maxPrices[symbol]=-1
+            minPrices[symbol]=-1
 
