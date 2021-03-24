@@ -11,12 +11,13 @@ import dateutil.parser
 from gtts import gTTS
 from yahoo_fin import stock_info
 from playsound import playsound
-
+from os import path
+import time
 indexrange = 10
 prices = {}
 maxPrices = {}
 minPrices = {}
-
+lastsaid = time.time() 
 
 def cleanInt(i):
     if i == '-':
@@ -89,16 +90,33 @@ def checkpricesrange(symbol, indexrange):
     print("\t",symbol," trend is ",d,' ',round(prices[symbol][indexrange],3),end=' ')
 
 def sayit(mytext):
-    print(mytext)
-    language = "en"
-    myobj = gTTS(text=mytext,lang=language,slow=False)
-    myobj.save('sayit.mp3')
+    global lastsaid
+    output = mytext
+    output = output.replace(',','')
+    output = output.replace('.','')
+    output = output.strip()
+    print(output)
+    output = output.replace(' ','_')
+    output = mytext + '.mp3';
+    if not path.exists(output):
+        language = "en"
+        myobj = gTTS(text=mytext,lang=language,slow=False)
+        myobj.save(output)
+    else:
+        #print(time.time() - lastsaid)
+        if (time.time()-lastsaid<30):#we wait 30 seconds before talking again
+            return
+        else:
+            lastsaid = time.time()
+            
     if os.name=='posix':
         #linux
-        os.system('mpg321 -q -4 sayit.mp3')
+        output = 'mpg321 -q -4 ' + output
+        os.system(output)
     else:
         #windows
-        playsound('sayit.mp3')
+        playsound(output)
+
 def swapname(symbol):
     if symbol=='tsla':
         return 'tesla'
