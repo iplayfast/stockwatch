@@ -79,9 +79,9 @@ def checkpricesrange(symbol, indexrange):
     for index in range(indexrange):
         v = v + checkprices(symbol, index)
     if v == -indexrange:
-        sayit(f'. Alert {name} is heading up')
+        sayit(f'Alert {name} is heading up')
     if v == indexrange:
-        sayit(f'. Alert {name} is heading down')
+        sayit(f'Alert {name} is heading down')
     d = '-'
     if v>0:
         d = 'D'
@@ -97,7 +97,7 @@ def sayit(mytext):
     output = output.strip()
     print(output)
     output = output.replace(' ','_')
-    output = mytext + '.mp3';
+    output = output + '.mp3';
     if not path.exists(output):
         language = "en"
         myobj = gTTS(text=mytext,lang=language,slow=False)
@@ -158,12 +158,12 @@ def runonce(indexrange):
                 minPrices[symbol]=price
             if minPrices[symbol]>price:
                 minPrices[symbol]=price
-                sayit(f'. Alert {stockname} has new minimum price')
+                sayit(f'Alert {stockname} has new minimum price')
             if (maxPrices[symbol]==-1):
                 maxPrices[symbol]=price
             if (maxPrices[symbol]<price):
                 maxPrices[symbol]=price
-                sayit(f', Alert {stockname} has new maximum price')
+                sayit(f'Alert {stockname} has new maximum price')
             checkpricesrange(symbol, indexrange)
     except AssertionError as error:
         print(f'error looking up {symbol} {error}')
