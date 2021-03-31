@@ -14,7 +14,7 @@ pip yahoo_fin gtts python-dateutil playsound
 
 Will alert you by saying 
 "Alert Tesla is heading up" or "Alert Tesla is heading down" if it detects 10 buys or sells in a row. Usually this is accurate enough to indicate.
-or if the stock has reached a new recorded high or low "Alert Tesla has a new maximum price" etc.
+If the stock has reached a new recorded high or low "Alert Tesla has a new maximum price" etc.
 
 Only a few stocks have their names, associted with the symbol, and if there is no name association, the symbol is spelled out. 
 
