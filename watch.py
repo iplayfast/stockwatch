@@ -118,6 +118,12 @@ def sayit(mytext):
         playsound(output)
 
 def swapname(symbol):
+    if symbol=='amzn':
+        return 'amazon'
+    if symbol=='cciv':
+        return 'Churchill capital'
+    if symbol=='fdx':
+        return 'fed ex'
     if symbol=='tsla':
         return 'tesla'
     if symbol=='pltr':
