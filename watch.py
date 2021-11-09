@@ -14,6 +14,7 @@ from playsound import playsound
 from os import path
 import time
 indexrange = 10
+trendcount=0
 prices = {}
 maxPrices = {}
 minPrices = {}
@@ -73,6 +74,7 @@ def checkprices(symbol, index):
 
 
 def checkpricesrange(symbol, indexrange):
+    global trendcount
     v = 0
     indexrange = indexrange - 1
     name = swapname(symbol)
@@ -87,6 +89,14 @@ def checkpricesrange(symbol, indexrange):
         d = 'D'
     if v<0:
         d = 'U'
+    if (d=='-'):
+        trendcount = trendcount+1;
+    else:
+        trendcount = trendcount-1;
+    if (trendcount>100):
+        print("\t looks like it's stalled, sleeping for a few minutes")
+        time.sleep(500);
+        
     print("\t",symbol," trend is ",d,' ',round(prices[symbol][indexrange],3),end=' ')
 
 def sayit(mytext):
@@ -126,6 +136,12 @@ def swapname(symbol):
         return 'fed ex'
     if symbol=='tsla':
         return 'tesla'
+    if symbol=='lcid':
+        return 'lucid'
+    if symbol=='dis':
+        return 'Disney'
+    if symbol=='qcom':
+        return 'qualcomm'
     if symbol=='pltr':
         return 'palentir'; 
     if symbol=='bmo':
@@ -174,7 +190,7 @@ def runonce(indexrange):
     except AssertionError as error:
         print(f'error looking up {symbol} {error}')
         time.sleep(6)
-    time.sleep(1)
+    time.sleep(6)
 
 for symbol in sys.argv[1:]:
     prices[symbol] = []
