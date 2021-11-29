@@ -13,6 +13,13 @@ from yahoo_fin import stock_info
 from playsound import playsound
 from os import path
 import time
+from colorama import Fore
+from colorama import Back 
+from colorama import Style
+os.system("")
+
+
+
 indexrange = 10
 trendcount=0
 prices = {}
@@ -85,10 +92,13 @@ def checkpricesrange(symbol, indexrange):
     if v == indexrange:
         sayit(f'Alert {name} is heading down')
     d = '-'
+    color = f'{Fore.BLACK}'
     if v>0:
         d = 'D'
+        color =f'{Fore.RED}'
     if v<0:
         d = 'U'
+        color = f'{Fore.GREEN}'
     if (d=='-'):
         trendcount = trendcount+1;
     else:
@@ -97,7 +107,8 @@ def checkpricesrange(symbol, indexrange):
         print("\t looks like it's stalled, sleeping for a few minutes")
         time.sleep(500);
         
-    print("\t",symbol," trend is ",d,' ',round(prices[symbol][indexrange],3),end=' ')
+    print("\t",color,symbol,' ',round(prices[symbol][indexrange],3),end=' ')
+    #print("\t",symbol," trend is ",d,' ',round(prices[symbol][indexrange],3),end=' ')
 
 def sayit(mytext):
     global lastsaid
@@ -105,7 +116,7 @@ def sayit(mytext):
     output = output.replace(',','')
     output = output.replace('.','')
     output = output.strip()
-    print(output)
+    print(f'{Fore.BLACK}',output)
     output = output.replace(' ','_')
     output = output + '.mp3';
     if not path.exists(output):
@@ -164,6 +175,7 @@ def swapname(symbol):
 
 def runonce(indexrange):
     #print('finding following stocks:', str(sys.argv[1:]), toDowHourMin())
+    print(f'{Back.WHITE}{Fore.BLUE}',end=' ')
     try:
         for symbol in sys.argv[1:]:
             try:
@@ -203,14 +215,14 @@ while True:
     dow, hm = toDowHourMin()
     if dow > '0' and dow < '6' and hm > '09:30' and hm < '16:00':
         print('')
-        print(hm,end=' ')
+        print(f'{Fore.BLACK}',hm,end=' ')
         runonce(indexrange)
     else:
         if dow > '0' and dow < '6':  # in right day but not right time
             time.sleep(60)  # sleep 1 minute
         else:
             sayit("After hours, so sleeping ")
-            time.sleep(60 * 60 * 24)  # sleep a day
+            time.sleep(59 * 60 * 24)  # sleep a bit less then a day
         for symbol in sys.argv[1:]: # new day, start fresh
             maxPrices[symbol]=-1
             minPrices[symbol]=-1
